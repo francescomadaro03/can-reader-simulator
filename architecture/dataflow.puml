@@ -1,0 +1,23 @@
+@startmindmap
+title Data flow - supposing that the parsing is correctly performed beforehand
+
+* Raw signal incoming
+** Signal recognition
+*** Signal format unknown
+**** Log Warning & Drop signal (Wait for next)
+*** Signal format supported
+**** DCBTable interrogation
+***** Code unknown (ID not in table)
+****** Log Warning & Drop signal (Wait for next)
+***** Retrieval of DCB entry and all SignalRef information
+****** Analysis of fields according to DCB entry
+******* Invalid payload length / Wrong distribution
+******** Log Error & Drop signal (Wait for next)
+******* All fields are correctly extracted
+******** Core Computation (Apply Scale, Offset, etc.)
+********* Math Error / Out of bounds
+********** Log Error & Drop signal
+********* Computation Successful
+********** Data is printed / Exported
+*********** End of current signal task (Wait for next)
+@endmindmap

@@ -1,0 +1,57 @@
+@startuml
+title Ports and Adapters View
+
+component "I/O" as IO {
+    class Printer {}
+    class Reader {}
+}
+
+component Parser {
+    class DBCParser {}
+}
+
+component Core {
+    struct CanFrame {}
+    struct DecodedSignal {}
+    struct DBCTable {}
+
+    interface IReader {}
+    interface IPrinter {}
+    interface IParser {}
+
+    interface ISplitter {}
+    interface IFinder {}
+    interface IComputer {}
+    class Splitter {}
+    class Finder {}
+    class Computer {}
+
+    class CANReaderSimulator {}
+}
+
+' adapters depend on Core (they implement its ports)
+Reader ..|> IReader
+Printer ..|> IPrinter
+DBCParser ..|> IParser
+DBCParser ..> DBCTable : builds
+Reader ..> CanFrame : produces
+Printer ..> DecodedSignal : receives
+
+' Core uses its own ports
+CANReaderSimulator ..> IReader
+CANReaderSimulator ..> IPrinter
+CANReaderSimulator ..> ISplitter
+CANReaderSimulator ..> IFinder
+CANReaderSimulator ..> IComputer
+
+Splitter ..|> ISplitter
+Finder ..|> IFinder
+Computer ..|> IComputer
+
+' composition root wires everything
+class Main <<composition root>> {}
+Main ..> CANReaderSimulator : runs
+Main ..> Reader : creates
+Main ..> Printer : creates
+Main ..> DBCParser : creates
+@enduml

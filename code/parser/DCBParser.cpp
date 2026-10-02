@@ -15,7 +15,7 @@ class DCBParser : public IParser {
             loadDcbFile(pathname);
         }
 
-        void createEntries(DCBTable table) override {
+        void createEntries(DCBTable& table) override {
             createDCBEntries(table);
         }
 
@@ -32,7 +32,7 @@ class DCBParser : public IParser {
             return;
         }
 
-        void createDCBEntries(DCBTable table){
+        void createDCBEntries(DCBTable& table){
             std::string line;
             std::optional<DCBEntry> currentEntry = std::nullopt;
 

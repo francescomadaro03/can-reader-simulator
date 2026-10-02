@@ -1,0 +1,52 @@
+VERSION "1.2"
+
+NS_ :
+    CM_
+    VAL_
+    BA_DEF_
+    BA_
+    BA_DEF_DEF_
+
+BS_:
+
+BU_: ECU Dash ABS Transmission BMS
+
+BO_ 291 EngineData: 8 ECU
+ SG_ EngineSpeed : 0|16@1+ (0.25,0) [0|16383.75] "rpm" Dash, Transmission
+ SG_ CoolantTemp : 16|8@1- (1,-40) [-40|215] "degC" Dash
+ SG_ OilPressure_BE : 31|12@0+ (0.1,0) [0|400] "bar" Dash
+ SG_ EngineRunning : 36|1@1+ (1,0) [0|1] "" Dash
+
+BO_ 768 GearboxData: 4 Transmission
+ SG_ Multiplexor M : 0|4@1+ (1,0) [0|15] "" ECU, Dash
+ SG_ Gear_m0 m0 : 4|4@1+ (1,0) [0|10] "gear" Dash
+ SG_ ClutchTemp_m1 m1 : 8|8@1+ (1,0) [0|250] "degC" Dash
+ SG_ ErrorCode_m2 m2 : 8|16@1+ (1,0) [0|65535] "" ECU, Dash
+
+BO_ 1280 BatteryInfo: 8 BMS
+ SG_ TotalVoltage : 0|64@1+ (0.0001,0) [0|1000] "V" Dash, ECU
+
+BO_ 2000 SensorCluster: 5 ABS
+ SG_ YawRate : 0|11@1- (0.01,-10.24) [-10.24|10.23] "rad/s" ECU
+ SG_ WheelSpeed_FL : 11|13@1+ (0.1,0) [0|819] "km/h" ECU
+ SG_ FlagActive : 24|1@1+ (1,0) [0|1] "" Dash
+ 
+BO_ 100 EmptyMessage: 0 ECU
+
+CM_ BO_ 768 "Message with multiplexed signals to test parser logic";
+CM_ SG_ 291 OilPressure_BE "Notice the Motorola Big-Endian format here";
+
+VAL_ 1024 AlarmLevel 0 "None" 1 "Low" 2 "High" 3 "Error" ;
+VAL_ 768 Gear_m0 0 "Neutral" 1 "Gear_1" 2 "Gear_2" 3 "Gear_3" 4 "Gear_4" 5 "Gear_5" 6 "Reverse" ;
+
+BA_DEF_  "BusType" STRING ;
+BA_DEF_ BO_  "GenMsgCycleTime" INT 0 65535;
+BA_DEF_ SG_  "GenSigStartValue" INT 0 65535;
+BA_DEF_DEF_  "BusType" "CAN";
+BA_DEF_DEF_  "GenMsgCycleTime" 0;
+BA_DEF_DEF_  "GenSigStartValue" 0;
+
+BA_ "BusType" "CAN";
+BA_ "GenMsgCycleTime" BO_ 291 100;
+BA_ "GenMsgCycleTime" BO_ 768 20;
+BA_ "GenSigStartValue" SG_ 291 EngineSpeed 800;

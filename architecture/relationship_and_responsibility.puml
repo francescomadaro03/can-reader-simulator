@@ -39,6 +39,9 @@ struct DecodedSignal {
 DCBTableEntry -up-> DCBTable : is saved into
 DCBTableEntry <-down- SignalDef : refers to
 
+interface IParser {
+    - buildDCBTableFromFile
+}
 
 interface IReader {
     - separateIdFromInformation
@@ -75,10 +78,10 @@ class CANReaderSimulator {
 }
 
 class DCBParser {
-    - buildDCBTableFromFile
+
 }
 
-CANReaderSimulator -up-> DCBParser : creates DCB Table
+CANReaderSimulator -up-> IParser : creates DCB Table
 CANReaderSimulator -down-> IReader : read information from the CAN
 CANReaderSimulator -down-> ISplitter : exploits to separate information
 CANReaderSimulator -up-> IFinder : find the message in DCBTable table
@@ -95,6 +98,6 @@ Computer --> DecodedSignal : produces
 Printer -up-> SignalDef : prints
 DCBParser --> DCBTable : generates
 Splitter --> SignalDef : requires 
-
+IParser <.. DCBParser : implements
 
 @enduml

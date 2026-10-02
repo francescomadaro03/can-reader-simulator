@@ -1,0 +1,28 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Component Diagram for CANSimulator
+
+' Cambiato da Person a System_Ext per correttezza semantica
+System_Ext(ecu, "ECU", "The ECU produces output to be analyzed")
+
+Container_Boundary(backend_api, "CANSimulator application") {
+    
+    Component(io, "I/O", "C++ classes", "It manages the read operation of raw data and the write operation of decoded information")
+    
+    ' Cambiato l'alias in core_computation (con underscore)
+    Component(core_computation, "Core Computation", "C++ classes", "It manages the translation of the raw data into specific information")
+    
+    Component(parser, "Parser", "C++ classes", "It parses the data from the .txt files into a readable data structure to be used")
+    
+    ComponentDb(file, "DCBTable", ".txt file", "It stores the information of the DCB data to be used within the application")
+}
+
+' Relazioni corrette usando i nuovi alias
+Rel(ecu, io, "Sends raw CAN data to")
+Rel(io, core_computation, "Passes raw data for processing to", "C++ method call")
+Rel(core_computation, parser, "Requests parsed DCB rules from", "C++ method call")
+Rel(parser, file, "Reads configuration from", "File I/O")
+Rel(core_computation, io, "Returns decoded information to", "C++ method call")
+
+@enduml

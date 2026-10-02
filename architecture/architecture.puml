@@ -1,0 +1,100 @@
+@startuml
+
+
+title CAN Reader Simulator - Architectural Overview
+
+struct SignalDef {
+    - name
+    - startingBit
+    - endingBit
+    - signed : bool
+    - weight
+    - offset
+}
+
+note right of SignalDef
+signed indicates whether the number 
+must be considered signed or unsigned (true/false)
+weight is the number to be multiplied to raw data
+offset is the number to be added to multiplied number
+offset can either be positive or negative
+end note
+
+struct DCBTableEntry {
+    - id
+    - name
+    - bytelength
+}
+
+struct DCBTable {
+    - unordered_map<int, DCBTableEntry>
+}
+
+struct DecodedSignal {
+    - id
+    - information 
+}
+
+
+DCBTableEntry -up-> DCBTable : is saved into
+DCBTableEntry <-down- SignalDef : refers to
+
+
+interface IReader {
+    - separateIdFromInformation
+}
+
+class Reader {}
+
+interface ISplitter {
+    - splitInformationInMessage
+}
+
+class Splitter {}
+
+interface IFinder {
+    - findDCBTableEntryThroughID
+}
+
+class Finder {}
+
+interface IComputer {
+    - interpretValueFromRawBytes
+}
+
+class Computer {}
+
+interface IPrinter {
+    - showInformation
+}
+
+class Printer {}
+
+class CANReaderSimulator {
+    - transformRawToInformation
+}
+
+class DCBParser {
+    - buildDCBTableFromFile
+}
+
+CANReaderSimulator -up-> DCBParser : creates DCB Table
+CANReaderSimulator -down-> IReader : read information from the CAN
+CANReaderSimulator -down-> ISplitter : exploits to separate information
+CANReaderSimulator -up-> IFinder : find the message in DCBTable table
+CANReaderSimulator -up-> IComputer : compute the information from raw data
+CANReaderSimulator -down-> IPrinter : show information on dashboard
+IPrinter <|.down. Printer : implements
+ISplitter <|.down. Splitter : implements
+IReader <|.down. Reader : implements
+Computer .down.|> IComputer : implements
+IFinder <|.down. Finder : implements
+Finder --> DCBTable : reades
+Computer --> SignalDef : exploits
+Computer --> DecodedSignal : produces
+Printer -up-> SignalDef : prints
+DCBParser --> DCBTable : generates
+Splitter --> SignalDef : requires 
+
+
+@enduml

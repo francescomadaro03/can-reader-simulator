@@ -1,7 +1,8 @@
 #include <string>
 #include <vector>
 #include <cstdint> 
-
+#ifndef SIGNALDEF_H
+#define SIGNALDEF_H
 
 enum class MultiplexType {
     Standard,
@@ -27,3 +28,5 @@ struct SignalDef{
 
 
 };
+
+#endif

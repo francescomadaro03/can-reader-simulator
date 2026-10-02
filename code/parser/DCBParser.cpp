@@ -1,18 +1,30 @@
 #include <DCBEntry.h>
 #include <DCBTable.h>
 #include <SignalDef.h>
+#include <IParser.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <optional>
 
 
-class DCBParser {
+class DCBParser : public IParser {
+
+    public:
+        void loadFile(const std::string pathname) override {
+            loadDcbFile(pathname);
+        }
+
+        void createEntries(DCBTable table) override {
+            createDCBEntries(table);
+        }
+
+
     private:
         std::fstream dbcfile;
 
-        void loadDcbFile(){
-            dbcfile.open("core\\dbc_data.dbc");
+        void loadDcbFile(const std::string pathname){
+            dbcfile.open(pathname);
             if(!dbcfile.is_open()){
                 std::cout << "DBC file not found" << std::endl;
             }

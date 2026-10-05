@@ -35,6 +35,22 @@ struct DecodedSignal {
     - information 
 }
 
+struct TranslatedRawMessage {
+    - timestamp
+    - id_message
+    - rawBytes
+}
+
+note left of TranslatedRawMessage 
+This struct is necessary to define a bridge
+between the raw incoming signal and the 
+signal to be defined.
+Timestamp field was added to support further
+evolution of the simulator
+end note
+
+Reader --> TranslatedRawMessage : generates
+Computer --> TranslatedRawMessage : receives and manages
 
 DCBTableEntry -up-> DCBTable : is saved into
 DCBTableEntry <-down- SignalDef : refers to

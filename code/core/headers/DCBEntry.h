@@ -7,6 +7,7 @@
 
 struct DCBEntry {
     uint32_t id;
+    uint8_t dlc;
     std::string name;
     std::vector<SignalDef> signalDefList;
 };

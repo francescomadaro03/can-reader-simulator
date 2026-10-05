@@ -65,6 +65,8 @@ class DCBParser : public IParser {
 
                     ss >> partial;
                     entry.name = partial;
+                    ss >> partial;
+                    entry.dlc = std::stoi(partial);
                     currentEntry = entry;
                     
                 }

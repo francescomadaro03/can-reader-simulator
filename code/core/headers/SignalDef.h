@@ -20,8 +20,8 @@ struct SignalDef{
     bool isSigned;
     float weight;
     float scale;
-    int min;
-    int max;
+    float min;
+    float max;
     std::string unit;
     std::vector<std::string> nodes;
 

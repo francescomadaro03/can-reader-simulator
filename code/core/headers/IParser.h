@@ -6,9 +6,10 @@
 
 
 class IParser {
-    virtual ~IParser() = default;
-    virtual void loadFile(const std::string pathname) {};
-    virtual void createEntries(DCBTable& table) {};
+    public:
+        virtual ~IParser() = default;
+        virtual void loadFile(const std::string pathname) {};
+        virtual void createEntries(DCBTable& table) {};
 };
 
 #endif

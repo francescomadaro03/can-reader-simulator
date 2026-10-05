@@ -1,7 +1,9 @@
-#include <DCBEntry.h>
-#include <DCBTable.h>
-#include <SignalDef.h>
-#include <IParser.h>
+
+
+#include "DCBEntry.h"
+#include "DCBEntry.h"
+#include "SignalDef.h"
+#include "IParser.h"
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -48,14 +50,14 @@ class DCBParser : public IParser {
                 
                 ss >> partial;
 
-                if(partial == "B0_"){
-                    if(currentEntry != std::nullopt){
-                        table.DCBTableData.emplace(currentEntry -> id, currentEntry);
+                if(partial == "BO_"){
+                    if(currentEntry != std::nullopt && currentEntry.has_value()){
+                        table.DCBTableData.emplace(currentEntry -> id, currentEntry.value());
                         currentEntry = std::nullopt;
                     }
                     DCBEntry entry;
                     if(ss >> partial){
-                        //correctful parsing of the entry
+                        entry.id = std::stoi(partial);
                     }
                     else {
                         std::cerr << "Error in DBC file, no suitable code";
@@ -78,32 +80,58 @@ class DCBParser : public IParser {
                     } 
                     else if (partial == "M") {
                         signal.muxType = MultiplexType::Switch;
+                        ss >> partial;
                     } 
                     else if (partial[0] == 'm') {
                         signal.muxType = MultiplexType::Multiplexed;
-                        signal.muxValue = std::stoi(partial.substr(1)); 
+                        signal.muxValue = std::stoi(partial.substr(1));
+                        ss >> partial;
                     }
 
                     ss >> partial;
 
-                    signal.startingBit = std::stoi(partial.substr(0));
-                    signal.endingBit = std::stoi(partial.substr(1)) + signal.startingBit;
-                    signal.endianess = std::stoi(partial.substr(2));
-                    partial.substr(3) == "+" ? signal.isSigned = false : signal.isSigned = true;
+                    size_t pipePos = partial.find('|');
+                    size_t atPos = partial.find('@');
+                    if (pipePos != std::string::npos && atPos != std::string::npos){
+                        std::string startingBit = partial.substr(0, pipePos);
+                        signal.startingBit = std::stoi(startingBit);
+
+                        std::string length = partial.substr(pipePos + 1, atPos - pipePos -1);
+                        signal.endingBit = std::stoi(startingBit) + std::stoi(length);
+
+                        std::string formatStr = partial.substr(atPos + 1);
+                        formatStr[0] == '1' ? signal.endianess = true : signal.endianess = false;
+                        formatStr[1] == '+' ? signal.isSigned = false : signal.isSigned = true;
+
+                    }
 
                     ss >> partial;
-                    signal.weight = std::stoi(partial.substr(1));
-                    signal.scale = std::stoi(partial.substr(3));
+
+                    size_t separateScaleAndWeight = partial.find(',');
+                    if(separateScaleAndWeight != std::string::npos){
+                        signal.weight = std::stof(partial.substr(1, separateScaleAndWeight));
+                        signal.scale = std::stof(partial.substr(separateScaleAndWeight+1, partial.length() -1 ));
+                    }
+
 
                     ss >> partial;
-                    signal.min = std::stoi(partial.substr(1));
-                    signal.max = std::stoi(partial.substr(3));
 
+                    size_t separateMaxAndMin = partial.find('|');
+                    if(separateMaxAndMin != std::string::npos){
+                        signal.min = std::stof(partial.substr(1, separateMaxAndMin));
+                        signal.max = std::stof(partial.substr(separateMaxAndMin+1, partial.length() -1 ));
+                    }
                     ss >> partial;
                     signal.unit = partial;
 
                     while(ss >> partial){
+                        size_t posComma = partial.find(',');
+                        if(posComma != std::string::npos){
+                            signal.nodes.push_back(partial.substr(0, posComma));
+                        }
+                        else {
                         signal.nodes.push_back(partial);
+                        }
                     }
 
                     currentEntry -> signalDefList.push_back(signal);
@@ -116,6 +144,14 @@ class DCBParser : public IParser {
 
 
             }
+
+            if(currentEntry.has_value()){
+                table.DCBTableData.emplace(currentEntry -> id, currentEntry.value());
+                currentEntry = std::nullopt;
+
+            }
+
+
         }
 
 

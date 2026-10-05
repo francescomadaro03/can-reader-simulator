@@ -2,8 +2,8 @@
 #include <string>
 #include <vector>
 
-#ifndef SIGNALDEF_H
-#define SIGNALDEF_H
+#ifndef DCBENTRY_H
+#define DCBENTRY_H
 
 struct DCBEntry {
     uint32_t id;

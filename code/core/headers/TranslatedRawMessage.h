@@ -6,7 +6,7 @@
 struct TranslatedRawMessage {
     double timestamp;
     uint32_t id;
-    char* rawData;
+    const char* rawData;
 
 };
 

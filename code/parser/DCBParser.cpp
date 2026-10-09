@@ -35,6 +35,16 @@ class DCBParser : public IParser {
         }
 
         void createDCBEntries(DCBTable& table){
+            /*
+                This function is responsibile of the definition of the lookup table
+                (defined as unordered_map in the header file).
+                It receives as input the table, and the file that has already been loaded
+                thanks to loadDcbFile method. 
+                It is responsible of the definition of the message and signal lookup table
+            */
+        
+
+
             std::string line;
             std::optional<DCBEntry> currentEntry = std::nullopt;
 
